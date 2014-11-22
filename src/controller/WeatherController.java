@@ -2,6 +2,8 @@ package controller;
 
 import interfaces.IController;
 import interfaces.IView;
+import jdk.nashorn.internal.parser.JSONParser;
+import json.JSONObject;
 import model.WeatherModel;
 
 import java.awt.event.ActionEvent;
@@ -11,17 +13,30 @@ import java.util.List;
 
 
 /**
- * Created by hp on 11/20/2014.
+ * The Weather controller class
  */
 public class WeatherController implements IController {
+
+    /**
+     * The members of this class are:
+     *  mModel - a reference to the WeatherModel
+     *  mViews - the list of views
+     *  httpClient - the httpClient used to get Weather info
+     *  jsonObject - the jsonObject used to read the data in json format
+     */
 
     private WeatherModel mModel;
 
     private List<IView> mViews;
 
     private WeatherHttpClient httpClient= new WeatherHttpClient();
+    private JSONObject jsonObject;
 
 
+    /**
+     * The action performed if the Refresh button has been pushed
+     * @param e The action event
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals(ACTION_REFRESH)) {
@@ -32,6 +47,7 @@ public class WeatherController implements IController {
                     refreshWeather();
                 } else {
                     notifyViews(true, "Invalid operation data");
+
                 }
             } catch (Exception ex) {
                 notifyViews(true, ex.getMessage());
@@ -40,6 +56,10 @@ public class WeatherController implements IController {
     }
 
 
+    /**
+     * Adds reference of a view to the list
+     * @param view The View
+     */
 
     public void addView(IView view){
         if (mViews == null) {
@@ -49,12 +69,21 @@ public class WeatherController implements IController {
         mViews.add(view);
     }
 
+    /**
+     * Adds reference of model to the controller
+     * @param model The weather model
+     */
 
     public void addModel(WeatherModel model) {
         mModel = model;
     }
 
 
+    /**
+     * Notifies the views if an error has occurred or a message has to be shown to the user
+     * @param error if true an error has occurred
+     * @param message The message to be displayed
+     */
     private void notifyViews(boolean error, String message) {
         if (mViews != null && !mViews.isEmpty()) {
             for (IView view : mViews) {
@@ -63,31 +92,25 @@ public class WeatherController implements IController {
         }
     }
 
+    /**
+     * Refreshes the WeatherModel parameters with the new values
+     */
     private void refreshWeather(){
 
         if (mModel!= null)
         {
-            //mModel.setWeather(30,25,12.4);
+
             try {
 
                 String data = httpClient.getWeatherData();
-                int index = data.indexOf("temp");
-                char dest[] = new char[3];
-                data.getChars(index+6,index+9,dest,0);
-                int temperature = Integer.parseInt(new String(dest));
+                jsonObject = new JSONObject(data);
+                JSONObject main = jsonObject.getJSONObject("main");
+                double temperature = main.getDouble("temp");
                // System.out.println(temperature);
-                index = data.indexOf("pressure");
-                char dest1[] = new char[4];
-                data.getChars(index+10,index+14,dest1,0);
-                int pressure = Integer.parseInt(new String(dest1));
-                //System.out.println(dest1);
-                index= data.indexOf("humidity");
-                char dest2[]=new char[2];
-                data.getChars(index+10,index+12,dest2,0);
-                int humidity = Integer.parseInt(new String(dest2));
-                System.out.println(dest2);
-
+                int humidity = main.getInt("humidity");
+                double pressure = main.getDouble("pressure");
                 mModel.setWeather(temperature,humidity,pressure);
+
 
             }
             catch (Exception ex)

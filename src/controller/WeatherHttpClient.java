@@ -7,12 +7,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by hp on 11/21/2014.
+ * This class implements the HTTPClient who connects to the weather api and requests weather info in JSON format
  */
 public class WeatherHttpClient {
 
     private static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?lat=44&lon=26";
 
+    /*
+       Returns the Weather information in JSON format
+     */
     public String getWeatherData() {
         HttpURLConnection con = null ;
         InputStream is = null;
@@ -24,7 +27,7 @@ public class WeatherHttpClient {
             con.setDoOutput(true);
             con.connect();
 
-            // Let's read the response
+
             StringBuffer buffer = new StringBuffer();
             is = con.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(is));

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by hp on 11/20/2014.
+ * The RefreshAction class that implements the action to be performed when user pushes the Refresh button
  */
 public class RefreshAction implements Action {
     private boolean mEnabled = true;

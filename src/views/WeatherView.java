@@ -10,12 +10,13 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by hp on 11/20/2014.
+ * The WeatherView implements the MVCs view class
  */
 public class WeatherView extends JFrame implements IView, IModelListener {
 
     private static final long serialVersionUID = -5758555454500685115L;
 
+    //the view components
     private JTextField mTemperatureTf = new JTextField(10);
     private JTextField mPressureTf = new JTextField(10);
     private JTextField mHumidityTf = new JTextField(10);
@@ -25,6 +26,9 @@ public class WeatherView extends JFrame implements IView, IModelListener {
     private IController mController;
     private WeatherModel mModel;
 
+    /**
+     * The WeatherView constructor initializes the view components and it layouts them
+     */
     public WeatherView(){
 
         mTemperatureTf.setEditable(false);
@@ -50,6 +54,10 @@ public class WeatherView extends JFrame implements IView, IModelListener {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    /**
+     * This method adds a model reference to the view
+     * @param model The WeatherModel
+     */
 
     public void addModel(WeatherModel model) {
         mModel = model;
@@ -58,6 +66,11 @@ public class WeatherView extends JFrame implements IView, IModelListener {
         mHumidityTf.setText(model.getHumidity());
     }
 
+    /**
+     * This methods sets the event listener for this view- the controller
+     * @param controller The WeatherController
+     */
+
     public void addController(IController controller) {
         if (mRefreshBtn.getAction() == null)
             mRefreshBtn.setAction(new RefreshAction());
@@ -65,9 +78,11 @@ public class WeatherView extends JFrame implements IView, IModelListener {
         mRefreshBtn.setActionCommand(IController.ACTION_REFRESH);
         mRefreshBtn.addActionListener(controller);
 
-    
     }
 
+    /**
+     * updates the view when changes to the model have been made
+     */
 
     @Override
     public void onUpdate() {
@@ -77,6 +92,12 @@ public class WeatherView extends JFrame implements IView, IModelListener {
         mHumidityTf.setText(mModel.getHumidity());
 
     }
+
+    /**
+     * This function displays and Error or a Message
+     * @param errorStatus if true the message displayed comes from an error
+     * @param message The message to be displayed
+     */
 
     @Override
     public void onMessage(boolean errorStatus, String message) {
